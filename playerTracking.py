@@ -16,6 +16,7 @@ while True:
 
     mask = cv2.inRange(img, lower, higher)
     blueTeam = cv2.bitwise_and(img, img, mask=mask)
+    test = cv2.bitwise_and(img, binary, mask=None)
 
     gray = cv2.cvtColor(blueTeam, cv2.COLOR_BGR2GRAY)
     ret, binary = cv2.threshold(gray, 100, 255, cv2.THRESH_OTSU)
@@ -37,6 +38,8 @@ while True:
     cv2.namedWindow("output", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("output", 720, 500)
 
+    cv2.imshow("test", test)
+    cv2.imshow("blue", blueTeam)
     cv2.imshow("mask", mask)
     cv2.imshow("output", img)
 

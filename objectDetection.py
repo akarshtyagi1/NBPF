@@ -21,18 +21,23 @@ object_detector=cv.createBackgroundSubtractorMOG2(history=100, varThreshold=100)
 
 while True: 
     isTrue, frame= capture.read()
-
     frame_resized=rescaleFrame(frame, 0.4)
     
     #region of interest
     roi=frame_resized[40:420, :730]
-     # 1. Object Detection
+    # 1. Object Detection
     mask=object_detector.apply(roi)
-    # this line is to remove shadow, but this will then not 
+    img2 = np.zeros_like(roi)
+    img2[:, :, 0] = mask
+    img2[:, :, 1] = mask
+    img2[:, :, 2] = mask
+
+    mask_with_color = cv.bitwise_and(roi, img2, mask=mask)
+    # this line is to remove shadow, but this will then not
     # cover players with black jersey since threshold of contour is very high!!
     # _, mask=cv.threshold(mask, 254, 255, cv.THRESH_BINARY)
 
-    contours, _= cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     detections=[]
     for cnt in contours:
         # Calculate area and remove all small elements
@@ -50,13 +55,12 @@ while True:
     for box_id in boxes_ids:
         x, y, w, h, id = box_id
         cv.putText(roi, str(id), (x, y-15), cv.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2)
-        cv.rectangle(roi,(x,y), (x+w, y+h), (0, 255, 0), 3) 
-
-
+        cv.rectangle(roi,(x,y), (x+w, y+h), (0, 255, 0), 3)
 
     
     cv.imshow('Video', frame_resized)
     cv.imshow('Mask', mask)
+    cv.imshow('mask colored', mask_with_color)
     cv.imshow('ROI', roi)
 
     if cv.waitKey(20) & 0xFF==ord('d'):

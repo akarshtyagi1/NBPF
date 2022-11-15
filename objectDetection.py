@@ -6,7 +6,7 @@ from tracker import *
 
 tracker= EuclideanDistTracker()
 
-capture=cv.VideoCapture('../resources/videos/1.avi')
+capture=cv.VideoCapture('./resources/videos/1.avi')
 
 def rescaleFrame(frame, scale=0.75):
     width=int(frame.shape[1]*scale)
@@ -17,7 +17,7 @@ def rescaleFrame(frame, scale=0.75):
 
 
 # Object Detection using camera
-object_detector=cv.createBackgroundSubtractorMOG2(history=100, varThreshold=40)
+object_detector=cv.createBackgroundSubtractorMOG2(history=100, varThreshold=100)
 
 while True: 
     isTrue, frame= capture.read()
@@ -26,14 +26,13 @@ while True:
     
     #region of interest
     roi=frame_resized[40:420, :730]
-
-    # 1. Object Detection 
+     # 1. Object Detection
     mask=object_detector.apply(roi)
     # this line is to remove shadow, but this will then not 
     # cover players with black jersey since threshold of contour is very high!!
-    # _, mask=cv.threshold(mask, 254, 255, cv.THRESH_BINARY) 
+    # _, mask=cv.threshold(mask, 254, 255, cv.THRESH_BINARY)
 
-    contours, _= cv.findContours(mask, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    contours, _= cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     detections=[]
     for cnt in contours:
         # Calculate area and remove all small elements

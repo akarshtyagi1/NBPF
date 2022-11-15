@@ -37,15 +37,13 @@ while True:
     cv2.namedWindow("output", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("output", 720, 500)
 
+    cv2.imshow("mask", mask)
     cv2.imshow("output", img)
 
     if cv2.waitKey(1) & 0xFF==ord('q'):
         break
 
-# When everything done, release the capture
-cap.release()
-# and release the output
-out.release()
+
 # finally, close the window
 cv2.destroyAllWindows()
 cv2.waitKey(1)
